@@ -3,9 +3,18 @@ import "./globals.css";
 import { BodyFont } from "@/lib/fonts/body";
 
 export const metadata: Metadata = {
-  title: "Hygia Lens | Know Your Medicine",
+  title:
+    "Hygia Lens | Find out safety rating of ingredients in your food, supplements and more",
   description:
-    "Hygia lens is an AI Powered app that helps you easily find out safety rating of all the ingredients present in your supplements",
+    "Hygia lens is an AI Powered app that helps you easily find out safety rating of all the ingredients present in your food, supplements and more",
+  openGraph: {
+    type: "website",
+    images: "/assets/images/og-hygia.png",
+    title:
+      "Hygia Lens | Find out safety rating of ingredients in your food, supplements and more",
+    description:
+      "Hygia lens is an AI Powered app that helps you easily find out safety rating of all the ingredients present in your food, supplements and more",
+  },
 };
 
 export default function RootLayout({
