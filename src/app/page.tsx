@@ -69,7 +69,7 @@ export default function Home() {
               src="/assets/images/appmockup.png"
               width={1200}
               height={600}
-              className="w-full max-w-[800px] h-auto mx-auto drop-shadow-2xl drop-shadow-[#49FF9280]"
+              className="w-full max-w-3xl h-auto mx-auto drop-shadow-2xl drop-shadow-[#49FF9280]"
             />
           </div>
           <div className="pt-2 flex gap-4 sm:flex-row justify-center items-center relative z-10">
@@ -84,7 +84,7 @@ export default function Home() {
                 Frequently Asked Questions
               </p>
             </div>
-            <div className="mt-4 sm:mt-6 max-w-xl mx-auto">
+            <div className="mt-4 sm:mt-6 max-w-2xl mx-auto border-b">
               <Accordion type="single" collapsible className="w-full">
                 {FAQS.map((faq) => {
                   return (
@@ -97,9 +97,9 @@ export default function Home() {
               </Accordion>
             </div>
           </div>
-          {/* <div className="mt-5 sm:mt-6">
+          <div className="mt-5 sm:mt-8">
             <NewsletterSubscribe />
-          </div> */}
+          </div>
         </main>
         <footer className="py-8 border-t border-gray-200 mt-8 sm:mt-16 flex flex-col sm:flex-row text-center items-center sm:text-left sm:justify-between sm:items-start gap-4 sm:gap-6">
           <div className="space-y-1">

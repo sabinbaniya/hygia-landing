@@ -12,16 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface NewsletterSubscribeProps {
   className?: string;
-  compact?: boolean;
 }
 
 export const NewsletterSubscribe = ({
   className = "",
-  compact = false,
 }: NewsletterSubscribeProps) => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -65,86 +63,53 @@ export const NewsletterSubscribe = ({
     }
   };
 
-  if (compact) {
-    return (
-      <div className={`space-y-3 ${className}`}>
-        <div className="flex items-center gap-2">
-          <Mail className="h-4 w-4 text-primary" />
-          <span className="font-medium text-sm">Get Feature Updates</span>
-          <Badge variant="secondary" className="text-xs">
-            Free
-          </Badge>
-        </div>
-
-        {status === "success" ? (
-          <div className="flex items-center gap-2 text-green-600 text-sm">
-            <Check className="h-4 w-4" />
-            <span>Successfully subscribed!</span>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-2">
-            <div className="flex gap-2">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 h-9"
-                disabled={isLoading}
-              />
-              <Button
-                type="submit"
-                size="sm"
-                disabled={isLoading}
-                className="px-3"
-              >
-                {isLoading ? (
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
-            {status === "error" && (
-              <p className="text-red-500 text-xs">{errorMessage}</p>
-            )}
-          </form>
-        )}
-
-        <p className="text-xs text-muted-foreground">
-          Be the first to know about new features and updates. Unsubscribe
-          anytime.
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <Card className={`w-full max-w-md ${className}`}>
+    <Card className={cn(`w-full max-w-2xl shadow-none mx-auto ${className}`)}>
       <CardHeader className="text-center space-y-2">
-        <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-          <Mail className="h-6 w-6 text-primary" />
+        <div
+          className={cn(
+            "relative mx-auto w-12 h-12 mt-6",
+            "before:content-[''] before:left-1/2 before:-translate-x-1/2 before:top-1/2 before:-translate-y-1/2 before:absolute before:block before:bg-primary/10 before:rounded-full before:w-20 before:h-20 before:z-10",
+            "after:content-[''] after:left-1/2 after:-translate-x-1/2 after:top-1/2 after:-translate-y-1/2 after:absolute after:block after:bg-primary/5 after:rounded-full after:w-28 after:h-28 after:z-10",
+            status === "success" &&
+              "before:bg-green-600/10 after:bg-green-600/5 "
+          )}
+        >
+          <div
+            className={cn(
+              "absolute w-12 -left-1/2 translate-x-1/2 -top-1/2 translate-y-1/2 h-12 bg-primary/30 rounded-full flex items-center justify-center z-30",
+              status === "success" && "bg-green-600/30"
+            )}
+          >
+            {status === "success" ? (
+              <Check className="h-8 w-8 text-green-600" />
+            ) : (
+              <Mail className="h-6 w-6 text-white" />
+            )}
+          </div>
         </div>
-        <CardTitle className="text-xl">Stay in the Loop</CardTitle>
-        <CardDescription>
-          Subscribe to our newsletter and be the first to know about exciting
-          new features, updates, and exclusive content.
+        <CardTitle
+          className={cn(
+            "text-xl mt-8",
+            status === "success" ? "text-green-600" : "text-primary"
+          )}
+        >
+          {status === "success" ? "Welcome aboard!" : "Stay in the Loop"}
+        </CardTitle>
+        <CardDescription
+          className={cn(
+            status === "success" ? "text-green-600" : "text-primary/60"
+          )}
+        >
+          {status === "success"
+            ? "You've successfully subscribed to our newsletter. Check your inbox for a confirmation email."
+            : "Subscribe to our newsletter and be the first to know about exciting new features, updates, and exclusive content."}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4">
         {status === "success" ? (
           <div className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-              <Check className="h-8 w-8 text-green-600" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-semibold text-green-800">Welcome aboard!</h3>
-              <p className="text-sm text-green-600">
-                You&apos;ve successfully subscribed to our newsletter. Check
-                your inbox for a confirmation email.
-              </p>
-            </div>
             <Button
               variant="outline"
               onClick={() => setStatus("idle")}
@@ -191,7 +156,7 @@ export const NewsletterSubscribe = ({
         )}
 
         <div className="space-y-3 pt-2">
-          <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+          {/* <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-1">
               <Check className="h-3 w-3" />
               <span>Weekly updates</span>
@@ -204,7 +169,7 @@ export const NewsletterSubscribe = ({
               <Check className="h-3 w-3" />
               <span>Unsubscribe anytime</span>
             </div>
-          </div>
+          </div> */}
 
           <p className="text-center text-xs text-muted-foreground">
             By subscribing, you agree to our privacy policy and terms of
