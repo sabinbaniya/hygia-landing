@@ -10,6 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { NewsletterSubscribe } from "./_components/newsletter-subscribe";
+import Link from "next/link";
 
 const FAQS = [
   {
@@ -120,10 +121,10 @@ export default function Home() {
             <p className="font-semibold ">Legals</p>
             <ul className="space-y-1 mt-1.5 font-medium text-gray-600">
               <li className="text-sm">
-                <a href="#">Privacy</a>
+                <Link href="/privacy">Privacy</Link>
               </li>
               <li className="text-sm">
-                <a href="#">Terms & Conditions</a>
+                <Link href="/terms">Terms & Conditions</Link>
               </li>
             </ul>
           </div>
