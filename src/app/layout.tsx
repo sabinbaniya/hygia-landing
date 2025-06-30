@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     siteName: "hygialens.com",
     images: [
       {
-        url: `${process.env.NEXT_PUBLIC_PRODUCTION_URL}/images/hygiaCover.png`,
+        url: `${process.env.NEXT_PUBLIC_PRODUCTION_URL}/assets/images/og-hygia.png`,
         type: "image/png",
         height: "630",
         width: "1200",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     creator: "@hygialens",
     images: [
       {
-        url: `${process.env.NEXT_PUBLIC_PRODUCTION_URL}/images/hygiaCover.png`,
+        url: `${process.env.NEXT_PUBLIC_PRODUCTION_URL}/assets/images/og-hygia.png`,
         alt: "HygiaLens",
         type: "image/png",
         height: "630",
@@ -56,18 +56,22 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico" },
-      { url: "/images/icon-16x16.png", sizes: "16x16" },
-      { url: "/images/icon-32x32.png", sizes: "32x32" },
-      { url: "/images/icon-48x48.png", sizes: "48x48" },
+      { url: "/assets/images/favicon-16x16.png", sizes: "16x16" },
+      { url: "/assets/images/favicon-32x32.png", sizes: "32x32" },
+      { url: "/assets/images/icon-48x48.png", sizes: "48x48" },
     ],
     shortcut: "/favicon.ico",
     apple: [
-      { url: "/images/apple-icon.png" },
-      { url: "/images/apple-icon-x3.png", sizes: "180x180", type: "image/png" },
+      { url: "/assets/images/apple-icon.png" },
+      {
+        url: "/assets/images/apple-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
     ],
     other: {
       rel: "apple-touch-icon",
-      url: "/images/apple-touch-icon.png",
+      url: "/assets/images/apple-touch-icon.png",
       sizes: "180x180",
       fetchPriority: "auto",
     },
