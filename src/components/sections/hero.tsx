@@ -55,13 +55,15 @@ const HeroSection = () => {
         </div>
       </Layout>
 
-      <Image
-        src="/assets/images/white_circle_360x360.png"
-        alt=""
-        height={120}
-        width={300}
-        className="h-20 w-auto absolute bottom-4 left-6 "
-      />
+      <a href="https://bolt.new" target="_blank" rel="noreferrer noopener">
+        <Image
+          src="/assets/images/white_circle_360x360.png"
+          alt=""
+          height={120}
+          width={300}
+          className="h-20 w-auto absolute bottom-4 left-6 "
+        />
+      </a>
     </div>
   );
 };
