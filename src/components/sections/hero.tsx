@@ -23,7 +23,7 @@ const HeroSection = () => {
                 <h1
                   className={`${PrimaryFont.className} font-bold py-2 text-xl lg:text-3xl text-[#1E5233]`}
                 >
-                  Welcome 👋,
+                  Welcome 👋
                 </h1>
               ) : (
                 <h1
