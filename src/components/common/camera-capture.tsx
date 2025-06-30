@@ -153,10 +153,13 @@ function CameraScanner({
     enabled: !!formData,
     queryFn: streamedQuery({
       queryFn: async () => {
-        const res = await fetch("http://localhost:8000/api/v1/product/info", {
-          method: "POST",
-          body: formData!,
-        });
+        const res = await fetch(
+          "https://api.hygialens.com/api/v1/product/info",
+          {
+            method: "POST",
+            body: formData!,
+          }
+        );
         if (!res.body) throw new Error("No response body");
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
