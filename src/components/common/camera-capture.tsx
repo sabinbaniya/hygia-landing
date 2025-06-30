@@ -186,8 +186,6 @@ function CameraScanner({
     refetchOnMount: false,
   });
 
-  console.log(tokens, "tokens");
-
   useEffect(() => {
     if (tokens.length === 0) return;
     const output = tokens.join("");
@@ -215,8 +213,6 @@ function CameraScanner({
     const blob = dataURLtoBlob(img);
     const fd = new FormData();
     fd.append("image", blob, "photo.jpg");
-    console.log("FormData contents:");
-    for (const [k, v] of fd.entries()) console.log(k, v);
     const token = await executeCaptchaAsync();
 
     if (!token) {
