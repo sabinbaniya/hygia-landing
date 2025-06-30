@@ -41,7 +41,7 @@ const HeroSection = () => {
             <div className="px-4 py-2 border-4 rounded-br-xl rounded-tr-xl rounded-tl-xl border-white transition-all duration-150 ease-linear">
               <WordRotate
                 className={`${PrimaryFont.className} font-bold text-5xl lg:text-7xl text-white`}
-                words={["Foods", "Cosmetics", "Suplements"]}
+                words={["Foods", "Cosmetics", "Supplements"]}
               />
             </div>
             <div className="pt-2 flex gap-4 sm:flex-row justify-center items-center relative z-10">
@@ -55,13 +55,15 @@ const HeroSection = () => {
         </div>
       </Layout>
 
-      <Image
-        src="/assets/images/white_circle_360x360.png"
-        alt=""
-        height={120}
-        width={300}
-        className="h-20 w-auto absolute bottom-4 left-6 "
-      />
+      <a href="https://bolt.new" target="_blank" rel="noreferrer noopener">
+        <Image
+          src="/assets/images/white_circle_360x360.png"
+          alt=""
+          height={120}
+          width={300}
+          className="h-20 w-auto absolute bottom-4 left-6 "
+        />
+      </a>
     </div>
   );
 };

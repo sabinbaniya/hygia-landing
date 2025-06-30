@@ -52,7 +52,7 @@ export const UpcomingFeaturesDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2">
+        <Button className="gap-2" size="md" variant="outline">
           Upcoming Features
           <Sparkles className="h-4 w-4" />
         </Button>
