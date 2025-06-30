@@ -23,6 +23,7 @@ import { experimental_streamedQuery as streamedQuery } from "@tanstack/react-que
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface IngredientInfo {
   ingredient: string;
@@ -132,7 +133,11 @@ const dataURLtoBlob = (dataURL: string) => {
   return new Blob([arr], { type: mime });
 };
 
-function CameraScanner() {
+function CameraScanner({
+  executeCaptchaAsync,
+}: {
+  executeCaptchaAsync: () => Promise<string | null | undefined>;
+}) {
   const camera = useRef<CameraType>(null);
   const [img, setImg] = useState<string | null>(null);
   const [parsed, setParsed] = useState<IngredientInfo[]>([]);
@@ -148,13 +153,10 @@ function CameraScanner() {
     enabled: !!formData,
     queryFn: streamedQuery({
       queryFn: async () => {
-        const res = await fetch(
-          "https://api.hygialens.com/api/v1/product/info",
-          {
-            method: "POST",
-            body: formData!,
-          }
-        );
+        const res = await fetch("http://localhost:8000/api/v1/product/info", {
+          method: "POST",
+          body: formData!,
+        });
         if (!res.body) throw new Error("No response body");
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
@@ -181,6 +183,8 @@ function CameraScanner() {
     refetchOnMount: false,
   });
 
+  console.log(tokens, "tokens");
+
   useEffect(() => {
     if (tokens.length === 0) return;
     const output = tokens.join("");
@@ -199,19 +203,26 @@ function CameraScanner() {
   }, [tokens]);
 
   const capture = async () => {
-    const photo = camera.current?.takePhoto();
+    const photo = camera.current?.takePhoto("base64url") as string;
     if (photo) setImg(photo);
   };
 
-  const upload = () => {
+  const upload = async () => {
     if (!img) return;
     const blob = dataURLtoBlob(img);
     const fd = new FormData();
     fd.append("image", blob, "photo.jpg");
     console.log("FormData contents:");
     for (const [k, v] of fd.entries()) console.log(k, v);
-    setFormData(fd);
-    toast("Uploading image and starting scan…");
+    const token = await executeCaptchaAsync();
+
+    if (!token) {
+      toast("Couldn't get captcha token, refresh page and try again!");
+    } else {
+      fd.append("token", token);
+      setFormData(fd);
+      toast("Uploading image and starting scan…");
+    }
   };
 
   return (
@@ -289,15 +300,27 @@ export default function CameraCapture({
   open: boolean;
   setOpen: (b: boolean) => void;
 }) {
+  const captchaRef = useRef<ReCAPTCHA | null>(null);
+
+  const executeCaptchaAsync = async () => {
+    return await captchaRef.current?.executeAsync();
+  };
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Camera Scanner</DialogTitle>
-          <DialogDescription>Capture and scan a product</DialogDescription>
-        </DialogHeader>
-        <CameraScanner />
-      </DialogContent>
-    </Dialog>
+    <>
+      <ReCAPTCHA
+        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+        ref={captchaRef}
+        size="invisible"
+      />
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Camera Scanner</DialogTitle>
+            <DialogDescription>Capture and scan a product</DialogDescription>
+          </DialogHeader>
+          <CameraScanner executeCaptchaAsync={executeCaptchaAsync} />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
