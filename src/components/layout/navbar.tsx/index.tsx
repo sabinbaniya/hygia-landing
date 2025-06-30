@@ -1,5 +1,6 @@
 "use client";
 
+import { UpcomingFeaturesDialog } from "@/components/common/upcoming-features-dialog";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { PrimaryFont } from "@/lib/fonts/primary";
@@ -31,9 +32,10 @@ const Navbar = () => {
         Hygia Lens
       </p>
       <div className="flex flex-row gap-2 py-2">
-        <Button size="md" variant="outline">
+        {/* <Button size="md" variant="outline">
           Upcomming Features
-        </Button>
+        </Button> */}
+        <UpcomingFeaturesDialog />
         {user?.role === "authenticated" && (
           <Button size="md" onClick={signOut}>
             Sign Out
