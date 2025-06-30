@@ -22,6 +22,8 @@ import { Dock, DockIcon } from "@/components/magicui/dock";
 import { useAtom } from "jotai";
 import { cameraDialogAtom } from "./atoms/camera/index.atoms";
 import CameraCapture from "./camera-capture";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -103,6 +105,8 @@ const DATA = {
 };
 
 export function MobileDock() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [open, setOpen] = useAtom(cameraDialogAtom);
 
   return (
@@ -132,7 +136,13 @@ export function MobileDock() {
         ))}
         <Separator orientation="vertical" className="h-full" />
         <DockIcon
-          onClick={() => setOpen(!open)}
+          onClick={() => {
+            if (user?.role === "authenticated") {
+              setOpen(!false);
+            } else {
+              router.push("/login");
+            }
+          }}
           className="bg-white/50 hover:bg-white dark:bg-black/50"
         >
           <Tooltip>
