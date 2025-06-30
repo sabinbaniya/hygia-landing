@@ -50,7 +50,9 @@
   }
 } */
 
+html,
 body {
+  scroll-behavior: smooth !important;
   min-height: 100%;
 }
 

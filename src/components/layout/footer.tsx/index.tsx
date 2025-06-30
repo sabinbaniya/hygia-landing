@@ -18,7 +18,7 @@ const Footer = () => {
             </p>
             <ul className="space-y-1 mt-1.5 font-medium text-[#1E5233]">
               <li className="text-sm">
-                <a href="#">About</a>
+                <Link href="#core">Our Core Value</Link>
               </li>
             </ul>
           </div>
