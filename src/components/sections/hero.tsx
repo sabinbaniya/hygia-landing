@@ -41,7 +41,7 @@ const HeroSection = () => {
             <div className="px-4 py-2 border-4 rounded-br-xl rounded-tr-xl rounded-tl-xl border-white transition-all duration-150 ease-linear">
               <WordRotate
                 className={`${PrimaryFont.className} font-bold text-5xl lg:text-7xl text-white`}
-                words={["Foods", "Cosmetics", "Suplements"]}
+                words={["Foods", "Cosmetics", "Supplements"]}
               />
             </div>
             <div className="pt-2 flex gap-4 sm:flex-row justify-center items-center relative z-10">
