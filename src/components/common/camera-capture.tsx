@@ -2,24 +2,27 @@ import React, { useEffect, useRef, useState } from "react";
 import { Camera, CameraType } from "react-camera-pro";
 import { Button } from "../ui/button";
 import {
-  CameraIcon,
-  CircleX,
   Loader2,
-  RotateCcw,
   Upload,
-  X,
+  RotateCcw,
+  ShieldCheck,
+  Shield,
+  AlertTriangle,
+  ShieldAlert,
 } from "lucide-react";
 import Image from "next/image";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "../ui/dialog";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { experimental_streamedQuery as streamedQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useStreamTokenArray } from "@llm-ui/react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Badge } from "../ui/badge";
 
 interface IngredientInfo {
   ingredient: string;
@@ -28,286 +31,273 @@ interface IngredientInfo {
   description: string;
 }
 
-function CameraScanner({ onClose }: { onClose: () => void }) {
-  const camera = useRef<CameraType>(null);
-  const [img, setImg] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [capturing, setCapturing] = useState(false);
-  const [success, setSuccess] = useState(false);
+interface IngredientCardProps {
+  data: IngredientInfo;
+}
 
-  const [parsed, setParsed] = useState<IngredientInfo[]>([]);
-  const [tokens, setTokens] = useState<{ token: string; delayMs: number }[]>(
-    []
-  );
-  const { output, isStreamFinished } = useStreamTokenArray(tokens);
+function getSafetyInfo(rating: number) {
+  if (rating <= 2) {
+    return {
+      color: "bg-green-100 text-green-800 border-green-200",
+      icon: ShieldCheck,
+      label: "Safe",
+      iconColor: "text-green-600",
+    };
+  } else if (rating <= 5) {
+    return {
+      color: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      icon: Shield,
+      label: "Moderate",
+      iconColor: "text-yellow-600",
+    };
+  } else if (rating <= 7) {
+    return {
+      color: "bg-orange-100 text-orange-800 border-orange-200",
+      icon: AlertTriangle,
+      label: "Caution",
+      iconColor: "text-orange-600",
+    };
+  } else {
+    return {
+      color: "bg-red-100 text-red-800 border-red-200",
+      icon: ShieldAlert,
+      label: "High Risk",
+      iconColor: "text-red-600",
+    };
+  }
+}
 
-  const { mutateAsync } = useMutation({
-    mutationKey: ["search"],
-    mutationFn: async (formData: FormData) => {
-      const res = await fetch("https://api.hygialens.com/api/v1/product/info", {
-        method: "POST",
-        body: formData,
-      });
-      if (!res.body) throw new Error("No stream!");
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      const chunks: { token: string; delayMs: number }[] = [];
-
-      let buffer = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        let idx;
-        while ((idx = buffer.indexOf("\n")) >= 0) {
-          const line = buffer.slice(0, idx);
-          buffer = buffer.slice(idx + 1);
-          chunks.push({ token: line + "\n", delayMs: 0 });
-        }
-      }
-
-      return chunks;
-    },
-  });
-
-  const capture = async () => {
-    setCapturing(true);
-    try {
-      const photo = camera.current?.takePhoto();
-      if (photo) setImg(photo);
-    } catch (error) {
-      console.error("Failed to capture photo:", error);
-    } finally {
-      setCapturing(false);
-    }
-  };
-
-  const dataURLtoBlob = (dataURL: string) => {
-    const [header, base64Data] = dataURL.split(",");
-    const mime = header.match(/:(.*?);/)![1];
-    const binary = atob(base64Data);
-    const arr = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
-    return new Blob([arr], { type: mime });
-  };
-
-  const upload = async () => {
-    if (!img) return;
-    setUploading(true);
-
-    try {
-      const blob = dataURLtoBlob(img as string);
-      const formData = new FormData();
-      formData.append("image", blob, "photo.jpg");
-
-      toast.promise(mutateAsync(formData), {
-        loading: "Fetching Data",
-        success: (res) => {
-          console.log(res);
-          setSuccess(true);
-          setTokens(res);
-          return "Successfully loaded data";
-        },
-        error: (err) => {
-          console.log(err);
-          return "Something went wrong";
-        },
-      });
-    } catch (error) {
-      console.error("Upload failed:", error);
-      alert("Upload failed. Please try again.");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const retake = () => {
-    setImg(null);
-  };
-
-  const handleClose = () => {
-    setImg(null);
-    onClose();
-  };
-
-  useEffect(() => {
-    const regex = /{[^}]+\}/g;
-    const matches = output.match(regex);
-    if (matches) {
-      const items: IngredientInfo[] = [];
-      for (const s of matches) {
-        try {
-          const obj = JSON.parse(s) as IngredientInfo;
-          items.push(obj);
-        } catch {}
-      }
-      setParsed(items);
-    }
-  }, [output]);
+function IngredientCard({ data }: IngredientCardProps) {
+  const safetyInfo = getSafetyInfo(data.safety_rating);
+  const SafetyIcon = safetyInfo.icon;
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="relative">
-        <Button
-          onClick={handleClose}
-          variant="ghost"
-          size="icon"
-          className="absolute -top-2 -right-2 z-10 h-8 w-8 rounded-full bg-white/90 hover:bg-white shadow-md"
-        >
-          <X className="h-4 w-4" />
-        </Button>
-
-        <div className="text-center mb-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
-            {!img ? "Scan The Label" : "Review Photo"}
-          </h2>
-          <p className="text-gray-600 text-sm">
-            {!img
-              ? "Position your camera and tap capture when ready"
-              : "Review your photo and upload or retake"}
+    <Card className="w-full max-w-md hover:shadow-lg transition-shadow duration-200 p-2">
+      <CardHeader className="p-2">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-xl font-bold text-gray-900">
+            {data.ingredient}
+          </CardTitle>
+          <div className="flex items-center gap-2">
+            <SafetyIcon className={`h-5 w-5 ${safetyInfo.iconColor}`} />
+            <Badge variant="outline" className={safetyInfo.color}>
+              {safetyInfo.label}
+            </Badge>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 mt-2">
+          <span className="text-sm text-gray-600">Risk Rating:</span>
+          <div className="flex items-center gap-1">
+            <span
+              className={`font-bold text-lg ${
+                data.safety_rating <= 2
+                  ? "text-green-600"
+                  : data.safety_rating <= 5
+                  ? "text-yellow-600"
+                  : data.safety_rating <= 7
+                  ? "text-orange-600"
+                  : "text-red-600"
+              }`}
+            >
+              {data.safety_rating}
+            </span>
+            <span className="text-sm text-gray-500">/10</span>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4 p-2">
+        <div>
+          <h4 className="font-semibold text-gray-900 mb-2">
+            Safety Assessment
+          </h4>
+          <p className="text-sm text-gray-700 leading-relaxed">{data.reason}</p>
+        </div>
+        <div>
+          <h4 className="font-semibold text-gray-900 mb-2">Description</h4>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            {data.description}
           </p>
         </div>
+      </CardContent>
+    </Card>
+  );
+}
 
-        {success && (
-          <div>
-            {parsed.map((info, i) => (
-              <div key={i} className="p-4 mb-2 border rounded">
-                <h3 className="text-lg font-bold">{info.ingredient}</h3>
-                <p>
-                  <strong>Safety rating:</strong> {info.safety_rating}
-                </p>
-                <p>{info.reason}</p>
-              </div>
-            ))}
+const dataURLtoBlob = (dataURL: string) => {
+  const [header, base64] = dataURL.split(",");
+  const mime = header.match(/:(.*?);/)![1];
+  const bin = atob(base64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+};
 
-            {!isStreamFinished && <div>Loading…</div>}
+function CameraScanner() {
+  const camera = useRef<CameraType>(null);
+  const [img, setImg] = useState<string | null>(null);
+  const [parsed, setParsed] = useState<IngredientInfo[]>([]);
+  const [formData, setFormData] = useState<FormData | null>(null);
+
+  const {
+    data: tokens = [],
+    isFetching,
+    isSuccess,
+    error,
+  } = useQuery({
+    queryKey: ["image-scan", formData],
+    enabled: !!formData,
+    queryFn: streamedQuery({
+      queryFn: async () => {
+        const res = await fetch(
+          "https://api.hygialens.com/api/v1/product/info",
+          {
+            method: "POST",
+            body: formData!,
+          }
+        );
+        if (!res.body) throw new Error("No response body");
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+
+        async function* gen() {
+          let buffer = "";
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) return;
+            buffer += decoder.decode(value, { stream: true });
+            let idx;
+            while ((idx = buffer.indexOf("\n")) !== -1) {
+              const line = buffer.slice(0, idx);
+              buffer = buffer.slice(idx + 1);
+              yield line + "\n";
+            }
+          }
+        }
+
+        return gen();
+      },
+    }),
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
+
+  useEffect(() => {
+    if (tokens.length === 0) return;
+    const output = tokens.join("");
+    const matches = output.match(/\{[^}]+\}/g) || [];
+    setParsed(
+      matches
+        .map((s) => {
+          try {
+            return JSON.parse(s) as IngredientInfo;
+          } catch {
+            return null;
+          }
+        })
+        .filter(Boolean) as IngredientInfo[]
+    );
+  }, [tokens]);
+
+  const capture = async () => {
+    const photo = camera.current?.takePhoto();
+    if (photo) setImg(photo);
+  };
+
+  const upload = () => {
+    if (!img) return;
+    const blob = dataURLtoBlob(img);
+    const fd = new FormData();
+    fd.append("image", blob, "photo.jpg");
+    console.log("FormData contents:");
+    for (const [k, v] of fd.entries()) console.log(k, v);
+    setFormData(fd);
+    toast("Uploading image and starting scan…");
+  };
+
+  return (
+    <div className="w-[50dvh] max-w-md mx-auto flex flex-col gap-4">
+      {!img && (
+        <div className="w-full h-auto flex flex-col gap-2">
+          <Camera
+            ref={camera}
+            aspectRatio={4 / 3}
+            facingMode="environment"
+            errorMessages={{
+              noCameraAccessible:
+                "No camera device accessible. Please connect your camera or try a different browser.",
+              permissionDenied:
+                "Permission denied. Please refresh and give camera permission.",
+              switchCamera:
+                "It is not possible to switch camera to different one because there is only one video device accessible.",
+              canvas: "Canvas is not supported.",
+            }}
+          />
+          <Button onClick={capture}>Capture</Button>
+        </div>
+      )}
+
+      {img && !isSuccess && parsed.length === 0 && (
+        <div className="flex flex-col gap-2 w-full h-auto">
+          <Image
+            src={img}
+            className="w-full h-[300px] rounded-xl shadow-sm"
+            width={400}
+            height={300}
+            alt="Captured"
+          />
+          <div className="flex flex-row w-full gap-2">
+            <Button onClick={upload} disabled={isFetching}>
+              {isFetching ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" />
+                  Scanning…
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2" />
+                  Upload & Scan
+                </>
+              )}
+            </Button>
+            <Button onClick={() => setImg(null)} disabled={isFetching}>
+              <RotateCcw className="mr-2" /> Retake
+            </Button>
           </div>
-        )}
+        </div>
+      )}
 
-        {img && !success && (
-          <div className="space-y-4">
-            <div className="relative overflow-hidden rounded-lg aspect-[4/3]">
-              <Image
-                width={600}
-                height={600}
-                src={img as string}
-                alt="Captured photo"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                onClick={retake}
-                variant="outline"
-                disabled={uploading}
-                className="h-12 font-semibold bg-transparent"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Retake
-              </Button>
-
-              <Button
-                onClick={upload}
-                disabled={uploading}
-                className="h-12 font-semibold disabled:opacity-50"
-              >
-                {uploading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        )}
-        {!img && (
-          <div className="space-y-4">
-            <div className="relative overflow-hidden rounded-lg bg-black aspect-[4/3]">
-              <Camera
-                ref={camera}
-                aspectRatio={4 / 3}
-                facingMode="environment"
-                errorMessages={{
-                  noCameraAccessible:
-                    "No camera device accessible. Please connect your camera or try a different browser.",
-                  permissionDenied:
-                    "Permission denied. Please refresh and give camera permission.",
-                  switchCamera:
-                    "It is not possible to switch camera to different one because there is only one video device accessible.",
-                  canvas: "Canvas is not supported.",
-                }}
-              />
-              <div className="absolute inset-0 border-2 border-white/20 rounded-lg pointer-events-none">
-                <div className="absolute top-4 left-4 w-6 h-6 border-l-2 border-t-2 border-white/60"></div>
-                <div className="absolute top-4 right-4 w-6 h-6 border-r-2 border-t-2 border-white/60"></div>
-                <div className="absolute bottom-4 left-4 w-6 h-6 border-l-2 border-b-2 border-white/60"></div>
-                <div className="absolute bottom-4 right-4 w-6 h-6 border-r-2 border-b-2 border-white/60"></div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                onClick={onClose}
-                variant="outline"
-                disabled={uploading}
-                className="h-12 font-semibold bg-transparent"
-              >
-                <CircleX className="w-4 h-4 mr-2" />
-                Close
-              </Button>
-
-              <Button
-                onClick={capture}
-                disabled={capturing}
-                className="w-full h-12 font-semibold disabled:opacity-50"
-              >
-                {capturing ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Capturing...
-                  </>
-                ) : (
-                  <>
-                    <CameraIcon className="w-4 h-4 mr-2" />
-                    Capture
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
+      {isFetching && !isSuccess && <p>Loading data…</p>}
+      {isSuccess && parsed.length > 0 && (
+        <div className="grid grid-cols-1 gap-2 h-[50dvh] overflow-y-auto">
+          {parsed.map((ingredient, index) => (
+            <IngredientCard key={index} data={ingredient} />
+          ))}
+        </div>
+      )}
+      {isSuccess && parsed.length === 0 && <p>No ingredients found.</p>}
+      {error && (
+        <p className="text-red-500">Error: {(error as Error).message}</p>
+      )}
     </div>
   );
 }
 
-const CameraCapture = ({
+export default function CameraCapture({
   open,
   setOpen,
 }: {
   open: boolean;
-  setOpen: (open: boolean) => void;
-}) => {
+  setOpen: (b: boolean) => void;
+}) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md p-6 max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="sr-only">
+      <DialogContent>
+        <DialogHeader>
           <DialogTitle>Camera Scanner</DialogTitle>
-          <DialogDescription>
-            Capture and upload photos using your camera
-          </DialogDescription>
+          <DialogDescription>Capture and scan a product</DialogDescription>
         </DialogHeader>
-        <CameraScanner onClose={() => setOpen(false)} />
+        <CameraScanner />
       </DialogContent>
     </Dialog>
   );
-};
-
-export default CameraCapture;
+}
