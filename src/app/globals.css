@@ -50,7 +50,9 @@
   }
 } */
 
+html,
 body {
+  scroll-behavior: smooth !important;
   min-height: 100%;
 }
 
@@ -135,4 +137,8 @@ body {
   button {
     cursor: pointer;
   }
+}
+
+.grecaptcha-badge {
+  visibility: hidden;
 }

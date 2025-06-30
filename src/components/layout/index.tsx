@@ -1,11 +1,15 @@
 import { cn } from "@/lib/utils";
 import type React from "react";
-interface LayoutProps {
+interface LayoutProps
+  extends React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  > {
   children: React.ReactNode;
   className?: string;
 }
 
-export function Layout({ children, className }: LayoutProps) {
+export function Layout({ children, className = "" }: LayoutProps) {
   return (
     <div
       className={cn(
