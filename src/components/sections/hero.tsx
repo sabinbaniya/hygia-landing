@@ -5,6 +5,7 @@ import { PrimaryFont } from "@/lib/fonts/primary";
 import { WordRotate } from "../magicui/word-rotate";
 import { Layout } from "../layout";
 import { HeroCards } from "../common/hero-cards";
+import Image from "next/image";
 
 const HeroSection = () => {
   return (
@@ -40,6 +41,14 @@ const HeroSection = () => {
           </div>
         </div>
       </Layout>
+
+      <Image
+        src="/assets/images/white_circle_360x360.png"
+        alt=""
+        height={120}
+        width={300}
+        className="h-20 w-auto absolute bottom-4 left-6 "
+      />
     </div>
   );
 };
