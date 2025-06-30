@@ -1,10 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 import { PrimaryFont } from "@/lib/fonts/primary";
+import { signOut } from "@/utils/auth";
 import React, { useEffect, useState } from "react";
 
 const Navbar = () => {
+  const { user } = useAuth();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -23,11 +26,7 @@ const Navbar = () => {
       }`}
     >
       <p
-        className={`${
-          PrimaryFont.className
-        } text-4xl font-semibold text-center py-4 ${
-          scrolled ? "text-[#1E5233]" : "text-white"
-        }`}
+        className={`${PrimaryFont.className} text-xl font-semibold text-center py-4 text-[#1E5233]`}
       >
         Hygia Lens
       </p>
@@ -35,7 +34,11 @@ const Navbar = () => {
         <Button size="md" variant="outline">
           Upcomming Features
         </Button>
-        <Button size="md">Subscribe To Newsletter</Button>
+        {user?.role === "authenticated" && (
+          <Button size="md" onClick={signOut}>
+            Sign Out
+          </Button>
+        )}
       </div>
     </nav>
   );
