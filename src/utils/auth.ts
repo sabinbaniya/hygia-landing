@@ -5,7 +5,7 @@ export const signInWithGoogle = async () => {
     provider: "google",
     options: {
       redirectTo: process.env.NEXT_PUBLIC_SITE_URL
-        ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
+        ? `${process.env.NEXT_PUBLIC_SITE_URL}`
         : undefined,
     },
   });
