@@ -7,9 +7,11 @@ export default function StatsSection() {
         <div className="flex flex-row items-end">
           <NumberTicker
             value={3}
-            className="whitespace-pre-wrap text-8xl tracking-tighter text-black dark:text-white"
+            className="whitespace-pre-wrap text-4xl min-[530px]:text-6xl min-[1250px]:text-8xl tracking-tighter text-black dark:text-white"
           />
-          <span className="text-black dark:text-white text-8xl">+</span>
+          <span className="text-black dark:text-white text-4xl min-[530px]:text-6xl min-[1250px]:text-8xl">
+            +
+          </span>
         </div>
       ),
       label: "Years of research",
@@ -19,9 +21,11 @@ export default function StatsSection() {
         <div className="flex flex-row items-end">
           <NumberTicker
             value={50}
-            className="whitespace-pre-wrap text-8xl tracking-tighter text-black dark:text-white"
+            className="whitespace-pre-wrap text-4xl min-[530px]:text-6xl min-[1250px]:text-8xl tracking-tighter text-black dark:text-white"
           />
-          <span className="text-black dark:text-white text-8xl">K+</span>
+          <span className="text-black dark:text-white text-4xl min-[530px]:text-6xl min-[1250px]:text-8xl">
+            K+
+          </span>
         </div>
       ),
       label: "Ingredients analyzed",
@@ -31,16 +35,18 @@ export default function StatsSection() {
         <div className="flex flex-row items-end">
           <NumberTicker
             value={1.2}
-            className="whitespace-pre-wrap text-8xl tracking-tighter text-black dark:text-white"
+            className="whitespace-pre-wrap text-4xl min-[530px]:text-6xl min-[1250px]:text-8xl tracking-tighter text-black dark:text-white"
           />
-          <span className="text-black dark:text-white text-8xl">K+</span>
+          <span className="text-black dark:text-white text-4xl min-[530px]:text-6xl min-[1250px]:text-8xl">
+            K+
+          </span>
         </div>
       ),
       label: "User reviews",
     },
     {
       number: (
-        <div className="whitespace-pre-wrap text-8xl tracking-tighter text-black dark:text-white">
+        <div className="whitespace-pre-wrap text-4xl min-[530px]:text-6xl min-[1250px]:text-8xl tracking-tighter text-black dark:text-white">
           24/7
         </div>
       ),
@@ -49,7 +55,7 @@ export default function StatsSection() {
   ];
 
   return (
-    <section className="bg-white py-16">
+    <div className="bg-white py-16">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16">
           {stats.map((stat, index) => (
@@ -62,6 +68,6 @@ export default function StatsSection() {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

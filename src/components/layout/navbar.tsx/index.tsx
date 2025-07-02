@@ -32,9 +32,6 @@ const Navbar = () => {
         Hygia Lens
       </p>
       <div className="flex flex-row gap-2 py-2">
-        {/* <Button size="md" variant="outline">
-          Upcomming Features
-        </Button> */}
         <UpcomingFeaturesDialog />
         {user?.role === "authenticated" && (
           <Button size="md" onClick={signOut}>
