@@ -54,6 +54,7 @@ html,
 body {
   scroll-behavior: smooth !important;
   min-height: 100%;
+  overflow-x: hidden;
 }
 
 :root {

@@ -15,8 +15,8 @@ const CoreValue = () => {
           quality of their products.
         </SectionHeader.Subtitle>
       </SectionHeader>
-      <div className="grid grid-cols-3 gap-6">
-        <Card className="relative">
+      <div className="grid grid-cols-1 min-[950px]:grid-cols-3 gap-6">
+        <Card className="relative bg-[#c5e5fe] border-none">
           <div className="bg-white absolute -top-4 p-2 -left-4 rounded-full shadow-sm border">
             <Megaphone size={28} />
           </div>
@@ -26,7 +26,7 @@ const CoreValue = () => {
             us to promote their products.
           </CardContent>
         </Card>
-        <Card className="relative">
+        <Card className="relative bg-[#d6fad5] border-none">
           <div className="bg-white absolute -top-4 p-2 -left-4 rounded-full shadow-sm border">
             <SearchCheck size={28} />
           </div>
@@ -36,7 +36,7 @@ const CoreValue = () => {
             free from any external pressure or brand involvement.
           </CardContent>
         </Card>
-        <Card className="relative">
+        <Card className="relative bg-[#fdfdc4] border-none">
           <div className="bg-white absolute -top-4 p-2 -left-4 rounded-full shadow-sm border">
             <ShieldCheck size={28} />
           </div>
