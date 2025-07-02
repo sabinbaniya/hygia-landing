@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { BodyFont } from "@/lib/fonts/body";
 import Provider from "@/provider";
-import Navbar from "@/components/layout/navbar.tsx";
-import Footer from "@/components/layout/footer.tsx";
 import { MobileDock } from "@/components/common/mobile-dock";
 
 export const metadata: Metadata = {
