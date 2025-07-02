@@ -85,7 +85,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${BodyFont.className} antialiased`}>
+      <body
+        className={`${BodyFont.className} antialiased`}
+        suppressHydrationWarning
+      >
         <Provider>
           <Navbar />
           {children}
