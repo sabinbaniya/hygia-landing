@@ -87,17 +87,17 @@ const DATA = {
     social: {
       LinkedIn: {
         name: "LinkedIn",
-        url: "#",
+        url: "https://www.linkedin.com/company/hygialens",
         icon: Icons.linkedin,
       },
       X: {
         name: "X",
-        url: "#",
+        url: "https://x.com/hygialens",
         icon: Icons.x,
       },
       Instagram: {
         name: "Instagram",
-        url: "#",
+        url: "https://www.instagram.com/hygialens/",
         icon: Icons.instagram,
       },
     },
@@ -162,6 +162,7 @@ export function MobileDock() {
                 <Link
                   href={social.url}
                   aria-label={social.name}
+                  target="__blank"
                   className={cn(
                     buttonVariants({ variant: "ghost", size: "icon" }),
                     "size-12 rounded-full"

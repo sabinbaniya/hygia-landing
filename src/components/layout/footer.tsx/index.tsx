@@ -3,15 +3,23 @@ import React from "react";
 import { Layout } from "..";
 import { cn } from "@/lib/utils";
 import { PrimaryFont } from "@/lib/fonts/primary";
+import { GetItOnGooglePlay } from "@/components/svg/get-it-on-google-play";
+import { GetItOnAppleStore } from "@/components/svg/get-it-on-apple-store";
 
 const Footer = () => {
   return (
-    <Layout className="bg-gradient-to-br from-[#3ec76e] via-[#7ddc65] to-[#3ec76e] rounded-2xl py-10 mb-10">
+    <Layout className="bg-gradient-to-br from-[#3ec76e] via-[#7ddc65] to-[#3ec76e] rounded-t-2xl py-10">
       <div className="flex flex-col items-center gap-8">
         <div className="text-white flex flex-col sm:flex-row items-start sm:justify-between gap-4 sm:gap-6 w-full">
-          <p className={cn("text-4xl font-semibold", PrimaryFont.className)}>
-            Hygia Lens
-          </p>
+          <div className="flex flex-col">
+            <p className={cn("text-4xl font-semibold", PrimaryFont.className)}>
+              Hygia Lens
+            </p>
+            <div className="pt-2 flex gap-4 sm:flex-row justify-center items-center relative z-10">
+              <GetItOnAppleStore />
+              <GetItOnGooglePlay />
+            </div>
+          </div>
           <div>
             <p className={cn("font-semibold text-4xl", PrimaryFont.className)}>
               Company
