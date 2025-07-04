@@ -7,7 +7,13 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   extendDefaultRuntimeCaching: true,
 });
 
-// Your Next config is automatically typed!
-module.exports = withPWA({
-  // Your Next.js config
+const withMDX = require("@next/mdx")({
+  extension: /\.(md|mdx)$/,
 });
+
+module.exports = withPWA(
+  withMDX({
+    experimental: { appDir: true },
+    pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
+  })
+);
