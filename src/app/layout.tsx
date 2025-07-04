@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     "Hygia Lens is an AI Powered app that helps you easily find out safety rating of all the ingredients present in your food, supplements and more",
   keywords: ["Hygia", "Hygia Lens", "Consumer Safety Application"],
   applicationName: "Hygia Lens",
+  manifest: "./manifest.json",
   metadataBase: new URL(`${process.env.NEXT_PUBLIC_PRODUCTION_URL}`),
   alternates: {
     canonical: "/",
@@ -67,12 +68,21 @@ export const metadata: Metadata = {
         type: "image/png",
       },
     ],
+
     other: {
       rel: "apple-touch-icon",
       url: "/assets/images/apple-touch-icon.png",
       sizes: "180x180",
       fetchPriority: "auto",
     },
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Hygia Lens | Consumer Safety Application | AI Powered",
+  },
+  formatDetection: {
+    telephone: false,
   },
 };
 
