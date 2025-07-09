@@ -189,7 +189,14 @@ function CameraScanner({
   useEffect(() => {
     if (tokens.length === 0) return;
     const output = tokens.join("");
-    const matches = output.match(/\{[^}]+\}/g) || [];
+    // console.log(output, "output")
+    let matches = output.split("\n")
+
+    matches = matches.map(item => {
+      return item.replace("data: ", "")
+    }) as []
+    
+    // console.log(matches, "matches")
     setParsed(
       matches
         .map((s) => {
